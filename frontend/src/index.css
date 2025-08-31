@@ -1,8 +1,18 @@
 @import "tailwindcss";
+
 @theme {
   --color-primary: #5f6fff;
+
+  /* custom grid utility */
+  --grid-cols-auto: repeat(auto-fill, minmax(200px, 1fr));
 }
 
+/* Example: show hr when active */
 .active hr {
   @apply block;
+}
+
+/* Hide scrollbar (Webkit browsers only) */
+::-webkit-scrollbar {
+  @apply hidden;
 }
