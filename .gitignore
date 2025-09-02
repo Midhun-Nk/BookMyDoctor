@@ -1,0 +1,7 @@
+# Ignore backend env file
+backend/.env
+
+# (optional) If you also want to ignore frontend env files
+frontend/.env
+
+admin/.env
