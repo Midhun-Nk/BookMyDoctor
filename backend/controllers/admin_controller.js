@@ -18,7 +18,9 @@ const addDoctor = async (req, res) => {
       fees,
       address,
     } = req.body;
-    const imageFile = req.file;
+
+    console.log("👉 Body:", req.body);
+    console.log("👉 File:", req.file);
 
     if (
       !name ||
@@ -30,7 +32,7 @@ const addDoctor = async (req, res) => {
       !about ||
       !fees ||
       !address ||
-      !imageFile
+      !req.file
     ) {
       return res.json({
         success: false,
@@ -52,7 +54,7 @@ const addDoctor = async (req, res) => {
       });
     }
 
-    // check if doctor already exists
+    // check duplicate
     const existingDoctor = await doctorModel.findOne({ email });
     if (existingDoctor) {
       return res.json({ success: false, message: "Email already registered" });
@@ -62,8 +64,8 @@ const addDoctor = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // upload image
-    const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
+    // upload to cloudinary
+    const imageUpload = await cloudinary.uploader.upload(req.file.path, {
       resource_type: "image",
     });
 
@@ -90,8 +92,8 @@ const addDoctor = async (req, res) => {
       data: newDoctor,
     });
   } catch (error) {
-    console.error(error);
-    res.json({ success: false, message: "Failed to add doctor" });
+    console.error("❌ Add Doctor Error:", error);
+    res.json({ success: false, message: error.message }); // 👈 send actual error
   }
 };
 
