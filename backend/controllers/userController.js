@@ -1,8 +1,10 @@
 //api to register user
 import validator from "validator";
-import bycrypt from "bcrypt";
-import userModel from "../models/userModel.js";
+import bcrypt from "bcrypt";
 
+import userModel from "../models/userModel.js";
+import { v2 } from "cloudinary";
+const cloudinary = v2;
 import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
   try {
@@ -24,8 +26,8 @@ export const registerUser = async (req, res) => {
       });
     }
     //Hashing userpassword
-    const salt = await bycrypt.genSalt(10);
-    const hashedPassword = await bycrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const userData = { name, email, password: hashedPassword };
 
@@ -53,7 +55,7 @@ export const loginUser = async (req, res) => {
     if (!user) {
       return res.json({ success: false, message: "User not found." });
     }
-    const isMatch = await bycrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (isMatch) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -68,5 +70,61 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     console.error("❌ Login User Error:", error);
     res.json({ success: false, message: error.message });
+  }
+};
+
+//api to get user profile data
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // ✅ get from middleware
+    const userData = await userModel.findById(userId).select("-password");
+
+    if (!userData) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    res.json({ success: true, userData });
+  } catch (error) {
+    console.error("❌ Get Profile Error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+//api to update user profile
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // ✅ from auth middleware
+    const { name, phone, address, dob, gender } = req.body;
+    const imageFile = req.file;
+
+    if (!name || !phone || !address || !dob || !gender) {
+      return res.json({ success: false, message: "All fields are required." });
+    }
+
+    // Update basic info
+    await userModel.findByIdAndUpdate(userId, {
+      name,
+      phone,
+      address: JSON.parse(address), // must be valid JSON string
+      dob,
+      gender,
+    });
+
+    // If image uploaded
+    if (imageFile) {
+      const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
+        resource_type: "auto",
+      });
+      await userModel.findByIdAndUpdate(userId, {
+        image: imageUpload.secure_url,
+      });
+    }
+
+    res.json({ success: true, message: "Profile updated successfully." });
+  } catch (error) {
+    console.error("❌ Update Profile Error:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
