@@ -1,6 +1,7 @@
 import appointmentModel from "../models/appointmentModel.js";
 import doctorModel from "../models/doctorModel.js";
-
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 export const changeAvailability = async (req, res) => {
   try {
     const { docId } = req.body;
@@ -40,6 +41,26 @@ export const appointmentsAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Appointments Admin Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const loginDoctor = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const doctor = await doctorModel.findOne({ email });
+    if (!doctor) {
+      return res.json({ success: false, message: "Doctor not found" });
+    }
+    const isMatch = await bcrypt.compare(password, doctor.password);
+    if (isMatch) {
+      const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET);
+      res.json({ success: true, message: "Login successful", token });
+    } else {
+      res.json({ success: false, message: "Invalid credentials" });
+    }
+  } catch (error) {
+    console.error("❌ Login Doctor Error:", error);
     res.json({ success: false, message: error.message });
   }
 };
