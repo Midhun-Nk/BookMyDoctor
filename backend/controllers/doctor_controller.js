@@ -1,3 +1,4 @@
+import appointmentModel from "../models/appointmentModel.js";
 import doctorModel from "../models/doctorModel.js";
 
 export const changeAvailability = async (req, res) => {
@@ -26,6 +27,19 @@ export const doctorList = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Doctor List Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const appointmentsAdmin = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find({});
+    res.json({
+      success: true,
+      appointments,
+    });
+  } catch (error) {
+    console.error("❌ Appointments Admin Error:", error);
     res.json({ success: false, message: error.message });
   }
 };
