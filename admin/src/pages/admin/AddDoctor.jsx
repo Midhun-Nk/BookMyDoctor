@@ -46,7 +46,7 @@ const AddDoctor = () => {
       }
 
       const { data } = await axios.post(
-        `http://localhost:4000/api/admin/add-doctor`,
+        `${backendUrl}/api/admin/add-doctor`,
         formData,
         {
           headers: {
