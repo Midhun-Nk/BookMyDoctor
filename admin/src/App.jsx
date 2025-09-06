@@ -12,12 +12,15 @@ import AllAppointment from "./pages/admin/AllAppointment";
 import AddDoctor from "./pages/admin/AddDoctor";
 import DoctorsList from "./pages/admin/DoctorsList";
 import { DoctorContext } from "./context/DoctorContext";
+import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+import DoctorProfile from "./pages/doctor/DoctorProfile";
+import DoctorAppointments from "./pages/doctor/DoctorAppointments";
 const App = () => {
   const { aToken } = useContext(AdminContext);
   const { dToken } = useContext(DoctorContext);
   return aToken || dToken ? (
     <div className="bg-[#F8F9FD9]">
-      {" "}
+      {" Admin Routes"}
       <ToastContainer />
       <Navbar />
       <div className="flex items-start">
@@ -28,6 +31,10 @@ const App = () => {
           <Route path="/all-appointments" element={<AllAppointment />} />
           <Route path="/add-doctor" element={<AddDoctor />} />
           <Route path="/doctors-list" element={<DoctorsList />} />
+          {/* Doctor Routes */}
+          <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+          <Route path="/doctor-profile" element={<DoctorProfile />} />
+          <Route path="/doctor-appointments" element={<DoctorAppointments />} />
         </Routes>
       </div>
     </div>

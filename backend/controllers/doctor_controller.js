@@ -64,3 +64,74 @@ export const loginDoctor = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+//api to get doctor appointments for doctor panel
+export const appointmentsDoctor = async (req, res) => {
+  try {
+    const docId = req.docId; // ✅ comes from middleware
+    const appointments = await appointmentModel.find({ docId });
+    res.json({
+      success: true,
+      appointments,
+    });
+  } catch (error) {
+    console.error("❌ Appointments Doctor Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+//api to mark appointment complete
+
+export const appointmentComplete = async (req, res) => {
+  try {
+    const { appointmentId } = req.body; // only take appointmentId from body
+    const docId = req.docId; // ✅ comes from middleware
+    const appointmentData = await appointmentModel.findById(appointmentId);
+
+    if (appointmentData && appointmentData.docId === docId) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, {
+        isCompleted: true,
+      });
+      return res.json({
+        success: true,
+        message: "Appointment marked as completed.",
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "You are not authorized to complete this appointment.",
+      });
+    }
+  } catch (error) {
+    console.error("❌ Appointment Complete Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+//api to mark appointment cancel
+
+export const appointmentCancel = async (req, res) => {
+  try {
+    const { appointmentId } = req.body; // only take appointmentId from body
+    const docId = req.docId; // ✅ comes from middleware
+    const appointmentData = await appointmentModel.findById(appointmentId);
+
+    if (appointmentData && appointmentData.docId === docId) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, {
+        cancelled: true,
+      });
+      return res.json({
+        success: true,
+        message: "Appointment marked as cancelled.",
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "You are not authorized to cancel this appointment.",
+      });
+    }
+  } catch (error) {
+    console.error("❌ Appointment Cancel Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
