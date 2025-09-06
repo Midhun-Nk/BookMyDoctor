@@ -14,20 +14,24 @@ const TopDoctors = () => {
       <div className="w-full grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-4 pt-5 gap-y-6 px-3 sm:px-0">
         {doctors.slice(0, 10).map((item, index) => (
           <div
-            className="border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500"
+            className="group border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500"
             key={index}
             onClick={() => {
-              navigate(`/appointment/${item._id}`), scrollTo(0, 0);
+              navigate(`/appointment/${item._id}`);
+              scrollTo(0, 0);
             }}
           >
-            <img className="bg-blue-50 not-visited:" src={item.image} alt="" />
-            <div
-              className="p-4 
-            "
-            >
+            <div className="overflow-hidden">
+              <img
+                className="bg-blue-50 w-full transition-all duration-500 group-hover:bg-primary"
+                src={item.image}
+                alt=""
+              />
+            </div>
+            <div className="p-4">
               <div
                 className={`flex items-center gap-2 text-sm text-center 
-                ${item.available ? "text-green-500" : "text-red-500"}`}
+      ${item.available ? "text-green-500" : "text-red-500"}`}
               >
                 <p
                   className={`w-2 h-2  ${
@@ -37,7 +41,7 @@ const TopDoctors = () => {
                 <p>{item.available ? "Available" : "Unavailable"}</p>
               </div>
               <p className="text-gray-900 text-lg font-medium">{item.name}</p>
-              <p className="text-gray-600 text-sm ">{item.speciality}</p>
+              <p className="text-gray-600 text-sm">{item.speciality}</p>
             </div>
           </div>
         ))}

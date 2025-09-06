@@ -16,7 +16,7 @@ const Navbar = () => {
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400">
       <img
         onClick={() => navigate("/")}
-        src={assets.logo}
+        src={assets.bookmydoctor}
         alt=""
         className="w-44 cursor-pointer"
       />
@@ -84,7 +84,7 @@ const Navbar = () => {
           } md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all`}
         >
           <div className="flex items-center justify-center px-5 py-6">
-            <img className="w-36" src={assets.logo} alt="" />
+            <img className="w-36" src={assets.bookmydoctor} alt="" />
             <img
               className="w-7"
               src={assets.cross_icon}
