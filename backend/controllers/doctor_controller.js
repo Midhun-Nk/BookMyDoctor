@@ -170,3 +170,42 @@ export const doctorDashboard = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+//api to get doctor profile
+
+export const doctorProfile = async (req, res) => {
+  try {
+    const docId = req.docId; // ✅
+    const profileData = await doctorModel.findById(docId).select("-password");
+
+    res.json({ success: true, profileData });
+  } catch (error) {
+    console.error("❌ Doctor Profile Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+//api to update doctor profile
+export const updateDoctorProfile = async (req, res) => {
+  try {
+    const docId = req.docId; // ✅
+    const { fees, address, available } = req.body;
+
+    const updatedDoctor = await doctorModel
+      .findByIdAndUpdate(
+        docId,
+        { fees, address, available },
+        { new: true } // ✅ return updated document
+      )
+      .select("-password"); // remove password from response
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully.",
+      profile: updatedDoctor, // ✅ send full profile
+    });
+  } catch (error) {
+    console.error("❌ Update Doctor Profile Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
